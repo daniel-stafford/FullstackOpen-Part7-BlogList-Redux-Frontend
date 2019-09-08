@@ -1,15 +1,19 @@
 import React from 'react'
 import '../index.css'
+import { connect } from 'react-redux'
 
 const Notification = ({ notification }) => {
-  if (notification.message === null) {
+  if (notification.category === 'hide') {
     return null
   }
-  if (notification.type === 'error')
-    return <div className='error'>{notification.message}</div>
+  if (notification.category === 'error')
+    return <div className='error'>{notification.content}</div>
 
-  if (notification.type === 'success')
-    return <div className='success'>{notification.message}</div>
+  if (notification.category === 'success')
+    return <div className='success'>{notification.content}</div>
+}
+const mapStateToProps = state => {
+  return { notification: state.notification }
 }
 
-export default Notification
+export default connect(mapStateToProps)(Notification)

@@ -5,8 +5,11 @@ import loginService from './services/login'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import { useField } from './hooks'
+import { connect } from 'react-redux'
+import { setNotification } from './reducers/notificationReducer'
 
-const App = () => {
+const App = props => {
+  console.log('app props', props)
   const [blogs, setBlogs] = useState([])
   // const [username, setUsername] = useState('')
   // const [password, setPassword] = useState('')
@@ -48,6 +51,7 @@ const App = () => {
       blogService.setToken(user.token)
       setUser(user)
       console.log(user)
+
       setNotification({ type: 'success', message: 'Correct credentials!' })
       setTimeout(() => {
         setNotification({ type: null, message: null })
@@ -56,10 +60,11 @@ const App = () => {
       password.reset()
     } catch (exception) {
       console.log(exception)
-      setNotification({ type: 'error', message: 'Wrong credentials' })
-      setTimeout(() => {
-        setNotification({ type: null, message: null })
-      }, 5000)
+      props.setNotification('Wrong credentials', 'error', 5)
+      // setNotification({ type: 'error', message: 'Wrong credentials' })
+      // setTimeout(() => {
+      //   setNotification({ type: null, message: null })
+      // }, 5000)
     }
   }
 
@@ -213,4 +218,11 @@ const App = () => {
     </div>
   )
 }
-export default App
+
+const mapDispatchToProps = {
+  setNotification
+}
+export default connect(
+  null,
+  mapDispatchToProps
+)(App)

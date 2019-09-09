@@ -9,20 +9,12 @@ import { connect } from 'react-redux'
 import { setNotification } from './reducers/notificationReducer'
 
 const App = props => {
-  console.log('app props', props)
   const [blogs, setBlogs] = useState([])
-  // const [username, setUsername] = useState('')
-  // const [password, setPassword] = useState('')
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
   const [user, setUser] = useState(null)
-  const [notification, setNotification] = useState({
-    message: null,
-    type: null
-  })
   const [addBlogVisible, setAddBlogVisible] = useState(false)
-
   const password = useField('password')
   const username = useField('text')
 
@@ -51,20 +43,10 @@ const App = props => {
       blogService.setToken(user.token)
       setUser(user)
       console.log(user)
-
-      setNotification({ type: 'success', message: 'Correct credentials!' })
-      setTimeout(() => {
-        setNotification({ type: null, message: null })
-      }, 5000)
-      username.reset()
-      password.reset()
+      props.setNotification('Correct credentials', 'success', 5)
     } catch (exception) {
       console.log(exception)
       props.setNotification('Wrong credentials', 'error', 5)
-      // setNotification({ type: 'error', message: 'Wrong credentials' })
-      // setTimeout(() => {
-      //   setNotification({ type: null, message: null })
-      // }, 5000)
     }
   }
 
@@ -74,15 +56,9 @@ const App = props => {
 
       blogService.update(blog.blog.id, newObject)
       setBlogs(blogs.map(p => (p.id === blog.blog.id ? newObject : p)))
-      setNotification({ type: 'success', message: 'Liked!' })
-      setTimeout(() => {
-        setNotification({ type: null, message: null })
-      }, 1000)
+      props.setNotification(`Liked!`, 'success', 2)
     } catch (error) {
-      setNotification({ type: 'error', message: `error: ${error}` })
-      setTimeout(() => {
-        setNotification({ type: null, message: null })
-      }, 5000)
+      props.setNotification(`error: ${error}`, 'error', 5)
     }
   }
 
@@ -105,10 +81,7 @@ const App = props => {
     console.log('you clicked log out')
     setUser(null)
     window.localStorage.clear()
-    setNotification({ type: 'success', message: 'Logged out!' })
-    setTimeout(() => {
-      setNotification({ type: null, message: null })
-    }, 5000)
+    props.setNotification(`Logged out`, 'success', 5)
   }
 
   const hideWhenVisible = { display: addBlogVisible ? 'none' : '' }
@@ -127,22 +100,12 @@ const App = props => {
 
       const proessedBlog = await blogService.create(blogObject)
       setBlogs(blogs.concat(proessedBlog))
-      setNotification({ type: 'success', message: `blog added!` })
-      setTimeout(() => {
-        setNotification({ type: null, message: null })
-      }, 5000)
+      props.setNotification(`blog added`, 'success', 5)
       setTitle('')
       setAuthor('')
       setUrl('')
     } catch (exception) {
-      console.log(exception)
-      setNotification({
-        type: 'error',
-        message: `Error adding blog ${exception}`
-      })
-      setTimeout(() => {
-        setNotification({ type: null, message: null })
-      }, 5000)
+      props.setNotification(`Error adding blog ${exception}`, 'error', 5)
     }
   }
 
@@ -156,19 +119,9 @@ const App = props => {
       try {
         await blogService.remove(blog.id, user.token)
         setBlogs(blogs.filter(p => p.id !== blog.id))
-        setNotification({ type: 'success', message: `${blog.title} deleted!` })
-        setTimeout(() => {
-          setNotification({ type: null, message: null })
-        }, 5000)
-      } catch (e) {
-        console.log(e)
-        setNotification({
-          type: 'error',
-          message: `Error deleting blog: ${e}`
-        })
-        setTimeout(() => {
-          setNotification({ type: null, message: null })
-        }, 5000)
+        props.setNotification(`${blog.title} deleted!`, 'success', 5)
+      } catch (error) {
+        props.setNotification(`${blog.title} not deleted! ${error}`, 'error', 5)
       }
     }
   }
@@ -176,7 +129,7 @@ const App = props => {
   return (
     <div>
       <h1>Blog</h1>
-      <Notification notification={notification} />
+      <Notification />
 
       {user === null ? (
         loginForm()

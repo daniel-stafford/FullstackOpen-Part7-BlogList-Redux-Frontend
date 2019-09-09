@@ -7,6 +7,7 @@ import BlogForm from './components/BlogForm'
 import { useField } from './hooks'
 import { connect } from 'react-redux'
 import { setNotification } from './reducers/notificationReducer'
+import { initializeBlogs } from './reducers/blogReducer'
 
 const App = props => {
   const [blogs, setBlogs] = useState([])
@@ -18,9 +19,11 @@ const App = props => {
   const password = useField('password')
   const username = useField('text')
 
+  /* eslint-disable */
   useEffect(() => {
-    blogService.getAll().then(blogs => setBlogs(blogs))
+    props.initializeBlogs()
   }, [])
+  /* eslint-enable */
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -153,7 +156,7 @@ const App = props => {
             />
             <button onClick={() => setAddBlogVisible(false)}>Cancel</button>
           </div>
-          {blogs
+          {props.blogsStore
             .sort((a, b) => {
               return b.likes - a.likes
             })
@@ -171,11 +174,14 @@ const App = props => {
     </div>
   )
 }
-
+const mapStateToProps = state => {
+  return { blogsStore: state.blogs }
+}
 const mapDispatchToProps = {
-  setNotification
+  setNotification,
+  initializeBlogs
 }
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(App)

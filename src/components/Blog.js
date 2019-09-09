@@ -16,6 +16,8 @@ const Blog = ({ blog, handleLike, handleRemove, user }) => {
         className='wholeBlog'
         onClick={() => {
           console.log('blog clicked!')
+          console.log('username', user)
+          console.log('blog user', blog.user)
           setExpandBlog(!expandBlog)
         }}
       >

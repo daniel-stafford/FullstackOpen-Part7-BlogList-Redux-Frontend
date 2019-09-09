@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import Blog from './components/Blog'
-import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
@@ -13,12 +12,13 @@ import {
   deleteBlog,
   addBlog
 } from './reducers/blogReducer'
+import { removeUser, addUser } from './reducers/userReducer'
 
 const App = props => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
-  const [user, setUser] = useState(null)
+  const user = props.user
   const [addBlogVisible, setAddBlogVisible] = useState(false)
   const password = useField('password')
   const username = useField('text')
@@ -27,16 +27,16 @@ const App = props => {
   useEffect(() => {
     props.initializeBlogs()
   }, [])
-  /* eslint-enable */
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
-      setUser(user)
-      blogService.setToken(user.token)
+      props.addUser(user)
+      // setUser(user)
     }
   }, [])
+  /* eslint-enable */
 
   const handleLogin = async event => {
     event.preventDefault()
@@ -46,8 +46,9 @@ const App = props => {
         password: password.data.value
       })
       window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
-      blogService.setToken(user.token)
-      setUser(user)
+      // blogService.setToken(user.token)
+      // setUser(user)
+      props.addUser(user)
       props.setNotification('Correct credentials', 'success', 5)
     } catch (exception) {
       props.setNotification('Wrong credentials', 'error', 5)
@@ -80,9 +81,10 @@ const App = props => {
   )
 
   const handleLogOut = () => {
-    console.log('you clicked log out')
-    setUser(null)
-    window.localStorage.clear()
+    // console.log('you clicked log out')
+    // setUser(null)
+    // window.localStorage.clear()
+    props.removeUser()
     props.setNotification(`Logged out`, 'success', 5)
   }
 
@@ -176,14 +178,16 @@ const App = props => {
   )
 }
 const mapStateToProps = state => {
-  return { blogsStore: state.blogs }
+  return { blogsStore: state.blogs, user: state.user }
 }
 const mapDispatchToProps = {
   setNotification,
   initializeBlogs,
   addLike,
   deleteBlog,
-  addBlog
+  addBlog,
+  removeUser,
+  addUser
 }
 export default connect(
   mapStateToProps,

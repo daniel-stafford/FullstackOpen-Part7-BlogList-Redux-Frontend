@@ -7,7 +7,7 @@ export const addUser = user => {
     await blogService.setToken(user.token)
     dispatch({
       type: 'ADD_USER',
-      data: { user }
+      data: { ...user }
     })
   }
 }

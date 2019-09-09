@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 
 const Blog = ({ blog, handleLike, handleRemove, user }) => {
   const [expandBlog, setExpandBlog] = useState(false)
@@ -16,8 +17,8 @@ const Blog = ({ blog, handleLike, handleRemove, user }) => {
         className='wholeBlog'
         onClick={() => {
           console.log('blog clicked!')
-          console.log('username', user)
-          console.log('blog user', blog.user)
+          console.log('username', user.username)
+          console.log('blog username', blog.user.username)
           setExpandBlog(!expandBlog)
         }}
       >
@@ -42,7 +43,11 @@ const Blog = ({ blog, handleLike, handleRemove, user }) => {
   )
 }
 
-export default Blog
+const mapStateToProps = state => {
+  return { user: state.user }
+}
+
+export default connect(mapStateToProps)(Blog)
 
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,

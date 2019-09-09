@@ -18,7 +18,6 @@ const App = props => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
-  const user = props.user
   const [addBlogVisible, setAddBlogVisible] = useState(false)
   const password = useField('password')
   const username = useField('text')
@@ -98,7 +97,7 @@ const App = props => {
         title,
         author,
         url,
-        user,
+        user: props.user,
         likes: 0
       }
 
@@ -122,7 +121,7 @@ const App = props => {
       )
     ) {
       try {
-        props.deleteBlog(blog, user.token)
+        props.deleteBlog(blog, props.user.token)
         // await blogService.remove(blog.id, user.token)
         // setBlogs(blogs.filter(p => p.id !== blog.id))
         props.setNotification(`${blog.title} deleted!`, 'success', 5)
@@ -137,12 +136,13 @@ const App = props => {
       <h1>Blog</h1>
       <Notification />
 
-      {user === null ? (
+      {props.user === null ? (
         loginForm()
       ) : (
         <div>
           <p>
-            {user.name} logged in<button onClick={handleLogOut}>Log out</button>
+            {props.user.name} logged in
+            <button onClick={handleLogOut}>Log out</button>
           </p>
           <div style={hideWhenVisible}>
             <button onClick={() => setAddBlogVisible(true)}>New Post</button>
@@ -169,7 +169,7 @@ const App = props => {
                 blog={blog}
                 handleLike={handleLike}
                 handleRemove={handleRemove}
-                user={user}
+                user={props.user}
               />
             ))}
         </div>

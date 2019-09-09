@@ -7,10 +7,48 @@ export const initializeBlogs = () => {
   }
 }
 
+export const addLike = (blog, newObject) => {
+  return async dispatch => {
+    blogService.update(blog.id, newObject)
+    dispatch({
+      type: 'ADD_LIKE',
+      data: { blog, newObject }
+    })
+  }
+}
+
+export const deleteBlog = (blog, user) => {
+  return async dispatch => {
+    await blogService.remove(blog.id, user.token)
+    dispatch({
+      type: 'DELETE_BLOG',
+      data: { blog }
+    })
+  }
+}
+
+export const addBlog = blogObject => {
+  return async dispatch => {
+    const newBlog = await blogService.create(blogObject)
+    dispatch({
+      type: 'ADD_BLOG',
+      data: { newBlog }
+    })
+  }
+}
+
 const blogReducer = (state = [], action) => {
   switch (action.type) {
     case 'INIT_BLOGS':
       return action.data
+    case 'ADD_LIKE':
+      return [...state].map(b =>
+        b.id === action.data.blog.id ? action.data.newObject : b
+      )
+    case 'ADD_BLOG':
+      return state.concat(action.data.newBlog)
+    case 'DELETE_BLOG':
+      return [...state].filter(b => b.id !== action.data.blog.id)
     default:
       return state
   }

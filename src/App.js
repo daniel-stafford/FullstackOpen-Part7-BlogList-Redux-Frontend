@@ -7,10 +7,14 @@ import BlogForm from './components/BlogForm'
 import { useField } from './hooks'
 import { connect } from 'react-redux'
 import { setNotification } from './reducers/notificationReducer'
-import { initializeBlogs } from './reducers/blogReducer'
+import {
+  initializeBlogs,
+  addLike,
+  deleteBlog,
+  addBlog
+} from './reducers/blogReducer'
 
 const App = props => {
-  const [blogs, setBlogs] = useState([])
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
@@ -36,7 +40,6 @@ const App = props => {
 
   const handleLogin = async event => {
     event.preventDefault()
-    console.log('logging in with', username, password)
     try {
       const user = await loginService.login({
         username: username.data.value,
@@ -45,10 +48,8 @@ const App = props => {
       window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
       blogService.setToken(user.token)
       setUser(user)
-      console.log(user)
       props.setNotification('Correct credentials', 'success', 5)
     } catch (exception) {
-      console.log(exception)
       props.setNotification('Wrong credentials', 'error', 5)
     }
   }
@@ -56,9 +57,7 @@ const App = props => {
   const handleLike = async blog => {
     try {
       const newObject = { ...blog.blog, likes: blog.blog.likes + 1 }
-
-      blogService.update(blog.blog.id, newObject)
-      setBlogs(blogs.map(p => (p.id === blog.blog.id ? newObject : p)))
+      props.addLike(blog.blog, newObject)
       props.setNotification(`Liked!`, 'success', 2)
     } catch (error) {
       props.setNotification(`error: ${error}`, 'error', 5)
@@ -101,8 +100,9 @@ const App = props => {
         likes: 0
       }
 
-      const proessedBlog = await blogService.create(blogObject)
-      setBlogs(blogs.concat(proessedBlog))
+      // const proessedBlog = await blogService.create(blogObject)
+      // setBlogs(blogs.concat(proessedBlog))
+      props.addBlog(blogObject)
       props.setNotification(`blog added`, 'success', 5)
       setTitle('')
       setAuthor('')
@@ -120,8 +120,9 @@ const App = props => {
       )
     ) {
       try {
-        await blogService.remove(blog.id, user.token)
-        setBlogs(blogs.filter(p => p.id !== blog.id))
+        props.deleteBlog(blog, user.token)
+        // await blogService.remove(blog.id, user.token)
+        // setBlogs(blogs.filter(p => p.id !== blog.id))
         props.setNotification(`${blog.title} deleted!`, 'success', 5)
       } catch (error) {
         props.setNotification(`${blog.title} not deleted! ${error}`, 'error', 5)
@@ -179,7 +180,10 @@ const mapStateToProps = state => {
 }
 const mapDispatchToProps = {
   setNotification,
-  initializeBlogs
+  initializeBlogs,
+  addLike,
+  deleteBlog,
+  addBlog
 }
 export default connect(
   mapStateToProps,

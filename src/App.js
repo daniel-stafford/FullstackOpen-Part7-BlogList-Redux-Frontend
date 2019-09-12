@@ -21,6 +21,8 @@ import {
 } from 'react-router-dom'
 import UserList from './components/UserList'
 import BlogList from './components/BlogList'
+import { initializeUsers } from './reducers/usersReducer'
+import User from './components/User'
 
 const App = props => {
   const [title, setTitle] = useState('')
@@ -34,6 +36,10 @@ const App = props => {
   useEffect(() => {
     props.initializeBlogs()
   }, [])
+
+  useEffect(() => {
+    props.initializeUsers()
+  })
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -126,6 +132,9 @@ const App = props => {
     }
   }
 
+  const userById = id => {
+    return props.users.find(u => u.id === id)
+  }
   const hideWhenVisible = { display: addBlogVisible ? 'none' : '' }
   const showWhenVisible = { display: addBlogVisible ? '' : 'none' }
 
@@ -166,6 +175,11 @@ const App = props => {
               )}
             />
             <Route exact path='/users' render={() => <UserList />} />
+            <Route
+              exact
+              path='/users/:id'
+              render={({ match }) => <User user={userById(match.params.id)} />}
+            />
           </div>
         )}
       </div>
@@ -178,6 +192,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = {
   setNotification,
   initializeBlogs,
+  initializeUsers,
   addLike,
   deleteBlog,
   addBlog,

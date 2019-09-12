@@ -1,13 +1,10 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { connect } from 'react-redux'
 import { initializeUsers } from '../reducers/usersReducer'
 import UserTable from './UserTable'
 
 /* eslint-disable */
 const UserList = props => {
-  useEffect(() => {
-    props.initializeUsers()
-  }, [])
   return (
     <div>
       <h2>Users</h2>

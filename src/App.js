@@ -23,6 +23,7 @@ import UserList from './components/UserList'
 import BlogList from './components/BlogList'
 import { initializeUsers } from './reducers/usersReducer'
 import User from './components/User'
+import DetailedBlog from './components/DetailedBlog'
 
 const App = props => {
   const [title, setTitle] = useState('')
@@ -66,9 +67,10 @@ const App = props => {
   }
 
   const handleLike = async blog => {
+    console.log('handleLike blog', blog)
     try {
-      const newObject = { ...blog.blog, likes: blog.blog.likes + 1 }
-      props.addLike(blog.blog, newObject)
+      const newObject = { ...blog, likes: blog.likes + 1 }
+      props.addLike(blog, newObject)
       props.setNotification(`Liked!`, 'success', 2)
     } catch (error) {
       props.setNotification(`error: ${error}`, 'error', 5)
@@ -132,10 +134,10 @@ const App = props => {
     }
   }
 
-  const userById = id => {
-    console.log('props users', props.users)
-    return props.users.find(u => u.id === id)
+  const findById = (source, id) => {
+    return source.find(u => u.id === id)
   }
+
   const hideWhenVisible = { display: addBlogVisible ? 'none' : '' }
   const showWhenVisible = { display: addBlogVisible ? '' : 'none' }
 
@@ -170,7 +172,7 @@ const App = props => {
             </div>
             <Route
               exact
-              path='/blogs'
+              path='/'
               render={() => (
                 <BlogList handleLike={handleLike} handleRemove={handleRemove} />
               )}
@@ -179,7 +181,21 @@ const App = props => {
             <Route
               exact
               path='/users/:id'
-              render={({ match }) => <User user={userById(match.params.id)} />}
+              render={({ match }) => (
+                <User user={findById(props.users, match.params.id)} />
+              )}
+            />
+            <Route exact path='/blogs' render={() => <BlogList />} />
+            <Route
+              exact
+              path='/blogs/:id'
+              render={({ match }) => (
+                <DetailedBlog
+                  blog={findById(props.blogs, match.params.id)}
+                  handleLike={handleLike}
+                  handleRemove={handleRemove}
+                />
+              )}
             />
           </div>
         )}

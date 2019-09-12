@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import { Link } from 'react-router-dom'
 
 const Blog = ({ blog, handleLike, handleRemove, user }) => {
   const [expandBlog, setExpandBlog] = useState(false)
@@ -22,20 +23,8 @@ const Blog = ({ blog, handleLike, handleRemove, user }) => {
           setExpandBlog(!expandBlog)
         }}
       >
-        {blog.title} {blog.author}
-        {expandBlog && (
-          <div className='extraContent'>
-            <p>{blog.url}</p>
-            <p>
-              {blog.likes} likes{' '}
-              <button onClick={() => handleLike({ blog })}>Like</button>
-            </p>
-            <p>Added by {blog.user.name}</p>
-            {user.username === blog.user.username && (
-              <button onClick={() => handleRemove({ blog })}>Remove</button>
-            )}
-          </div>
-        )}
+        <Link to={`/blogs/${blog.id}`}> {blog.title} </Link>
+        {blog.author}
       </div>
 
       <div></div>

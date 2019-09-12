@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import Blog from './components/Blog'
 import loginService from './services/login'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
@@ -13,6 +12,15 @@ import {
   addBlog
 } from './reducers/blogReducer'
 import { removeUser, addUser } from './reducers/userReducer'
+import {
+  BrowserRouter as Router,
+  Route,
+  Link,
+  Redirect,
+  withRouter
+} from 'react-router-dom'
+import UserList from './components/UserList'
+import BlogList from './components/BlogList'
 
 const App = props => {
   const [title, setTitle] = useState('')
@@ -32,7 +40,6 @@ const App = props => {
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       props.addUser(user)
-      // setUser(user)
     }
   }, [])
   /* eslint-enable */
@@ -45,8 +52,6 @@ const App = props => {
         password: password.data.value
       })
       window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
-      // blogService.setToken(user.token)
-      // setUser(user)
       props.addUser(user)
       props.setNotification('Correct credentials', 'success', 5)
     } catch (exception) {
@@ -80,15 +85,9 @@ const App = props => {
   )
 
   const handleLogOut = () => {
-    // console.log('you clicked log out')
-    // setUser(null)
-    // window.localStorage.clear()
     props.removeUser()
     props.setNotification(`Logged out`, 'success', 5)
   }
-
-  const hideWhenVisible = { display: addBlogVisible ? 'none' : '' }
-  const showWhenVisible = { display: addBlogVisible ? '' : 'none' }
 
   const handleAddBlog = async event => {
     event.preventDefault()
@@ -101,8 +100,6 @@ const App = props => {
         likes: 0
       }
 
-      // const proessedBlog = await blogService.create(blogObject)
-      // setBlogs(blogs.concat(proessedBlog))
       props.addBlog(blogObject)
       props.setNotification(`blog added`, 'success', 5)
       setTitle('')
@@ -122,8 +119,6 @@ const App = props => {
     ) {
       try {
         props.deleteBlog(blog, props.user.token)
-        // await blogService.remove(blog.id, user.token)
-        // setBlogs(blogs.filter(p => p.id !== blog.id))
         props.setNotification(`${blog.title} deleted!`, 'success', 5)
       } catch (error) {
         props.setNotification(`${blog.title} not deleted! ${error}`, 'error', 5)
@@ -131,54 +126,54 @@ const App = props => {
     }
   }
 
-  return (
-    <div>
-      <h1>Blog</h1>
-      <Notification />
+  const hideWhenVisible = { display: addBlogVisible ? 'none' : '' }
+  const showWhenVisible = { display: addBlogVisible ? '' : 'none' }
 
-      {props.user === null ? (
-        loginForm()
-      ) : (
-        <div>
-          <p>
-            {props.user.name} logged in
-            <button onClick={handleLogOut}>Log out</button>
-          </p>
-          <div style={hideWhenVisible}>
-            <button onClick={() => setAddBlogVisible(true)}>New Post</button>
-          </div>
-          <div style={showWhenVisible}>
-            <BlogForm
-              handleAddBlog={handleAddBlog}
-              title={title}
-              setTitle={setTitle}
-              author={author}
-              setAuthor={setAuthor}
-              url={url}
-              setUrl={setUrl}
-            />
-            <button onClick={() => setAddBlogVisible(false)}>Cancel</button>
-          </div>
-          {props.blogsStore
-            .sort((a, b) => {
-              return b.likes - a.likes
-            })
-            .map(blog => (
-              <Blog
-                key={blog.id}
-                blog={blog}
-                handleLike={handleLike}
-                handleRemove={handleRemove}
-                user={props.user}
+  return (
+    <Router>
+      <div>
+        <h1>Blog</h1>
+        <Notification />
+
+        {props.user === null ? (
+          loginForm()
+        ) : (
+          <div>
+            <p>
+              {props.user.name} logged in
+              <button onClick={handleLogOut}>Log out</button>
+            </p>
+            <div style={hideWhenVisible}>
+              <button onClick={() => setAddBlogVisible(true)}>New Post</button>
+            </div>
+            <div style={showWhenVisible}>
+              <BlogForm
+                handleAddBlog={handleAddBlog}
+                title={title}
+                setTitle={setTitle}
+                author={author}
+                setAuthor={setAuthor}
+                url={url}
+                setUrl={setUrl}
               />
-            ))}
-        </div>
-      )}
-    </div>
+              <button onClick={() => setAddBlogVisible(false)}>Cancel</button>
+            </div>
+            <Route
+              exact
+              path='/blogs'
+              render={() => (
+                <BlogList handleLike={handleLike} handleRemove={handleRemove} />
+              )}
+            />
+            <Route exact path='/users' render={() => <UserList />} />
+          </div>
+        )}
+      </div>
+    </Router>
   )
 }
 const mapStateToProps = state => {
-  return { blogsStore: state.blogs, user: state.user }
+  return { blogs: state.blogs, user: state.user }
 }
 const mapDispatchToProps = {
   setNotification,

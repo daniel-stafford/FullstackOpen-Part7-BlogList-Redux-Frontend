@@ -4,11 +4,15 @@ const initialState = null
 
 export const addUser = user => {
   return async dispatch => {
+    try {
+      dispatch({
+        type: 'ADD_USER',
+        data: { ...user }
+      })
+    } catch (error) {
+      console.log(error)
+    }
     await blogService.setToken(user.token)
-    dispatch({
-      type: 'ADD_USER',
-      data: { ...user }
-    })
   }
 }
 

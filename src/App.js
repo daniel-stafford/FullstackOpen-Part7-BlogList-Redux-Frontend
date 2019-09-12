@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import loginService from './services/login'
 import Notification from './components/Notification'
-import BlogForm from './components/BlogForm'
 import { useField } from './hooks'
 import { connect } from 'react-redux'
 import { setNotification } from './reducers/notificationReducer'
@@ -12,13 +11,7 @@ import {
   addBlog
 } from './reducers/blogReducer'
 import { removeUser, addUser } from './reducers/userReducer'
-import {
-  BrowserRouter as Router,
-  Route,
-  Link,
-  Redirect,
-  withRouter
-} from 'react-router-dom'
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
 import UserList from './components/UserList'
 import BlogList from './components/BlogList'
 import { initializeUsers } from './reducers/usersReducer'
@@ -146,35 +139,40 @@ const App = props => {
       <div>
         <h1>Blog</h1>
         <Notification />
-
         {props.user === null ? (
           loginForm()
         ) : (
           <div>
-            <p>
-              {props.user.name} logged in
-              <button onClick={handleLogOut}>Log out</button>
-            </p>
-            <div style={hideWhenVisible}>
-              <button onClick={() => setAddBlogVisible(true)}>New Post</button>
-            </div>
-            <div style={showWhenVisible}>
-              <BlogForm
-                handleAddBlog={handleAddBlog}
-                title={title}
-                setTitle={setTitle}
-                author={author}
-                setAuthor={setAuthor}
-                url={url}
-                setUrl={setUrl}
-              />
-              <button onClick={() => setAddBlogVisible(false)}>Cancel</button>
+            <div>
+              <div style={{ backgroundColor: '#D0D0D0' }}>
+                <Link style={{ padding: 5 }} to='/'>
+                  blogs
+                </Link>
+                <Link style={{ padding: 5 }} to='/users'>
+                  users
+                </Link>
+                {props.user.name} logged in
+                <button onClick={handleLogOut}>Log out</button>
+              </div>
             </div>
             <Route
               exact
               path='/'
               render={() => (
-                <BlogList handleLike={handleLike} handleRemove={handleRemove} />
+                <BlogList
+                  handleLike={handleLike}
+                  handleRemove={handleRemove}
+                  handleAddBlog={handleAddBlog}
+                  title={title}
+                  setTitle={setTitle}
+                  author={author}
+                  setAuthor={setAuthor}
+                  url={url}
+                  setUrl={setUrl}
+                  setAddBlogVisible={setAddBlogVisible}
+                  hideWhenVisible={hideWhenVisible}
+                  showWhenVisible={showWhenVisible}
+                />
               )}
             />
             <Route exact path='/users' render={() => <UserList />} />

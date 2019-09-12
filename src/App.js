@@ -39,7 +39,7 @@ const App = props => {
 
   useEffect(() => {
     props.initializeUsers()
-  })
+  }, [])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -133,6 +133,7 @@ const App = props => {
   }
 
   const userById = id => {
+    console.log('props users', props.users)
     return props.users.find(u => u.id === id)
   }
   const hideWhenVisible = { display: addBlogVisible ? 'none' : '' }
@@ -187,7 +188,7 @@ const App = props => {
   )
 }
 const mapStateToProps = state => {
-  return { blogs: state.blogs, user: state.user }
+  return { blogs: state.blogs, user: state.user, users: state.users }
 }
 const mapDispatchToProps = {
   setNotification,

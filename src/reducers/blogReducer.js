@@ -17,6 +17,22 @@ export const addLike = (blog, newObject) => {
   }
 }
 
+export const addComment = (blog, newObject) => {
+  return async dispatch => {
+    const commentedBlog = await blogService.expand(
+      blog.id,
+      'comments',
+      newObject
+    )
+    console.log('newObject', newObject)
+    console.log('commented blog', commentedBlog)
+    dispatch({
+      type: 'ADD_COMMENT',
+      data: { commentedBlog }
+    })
+  }
+}
+
 export const deleteBlog = (blog, user) => {
   return async dispatch => {
     await blogService.remove(blog.id, user.token)
@@ -47,6 +63,10 @@ const blogReducer = (state = [], action) => {
       )
     case 'ADD_BLOG':
       return state.concat(action.data.newBlog)
+    case 'ADD_COMMENT':
+      return state.map(b =>
+        b.id === action.data.commentedBlog.id ? action.data.commentedBlog : b
+      )
     case 'DELETE_BLOG':
       return [...state].filter(b => b.id !== action.data.blog.id)
     default:

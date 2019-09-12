@@ -1,25 +1,49 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { connect } from 'react-redux'
+import { addComment } from '../reducers/blogReducer'
 
 const DetailedBlog = props => {
-  console.log('individual detailedBlog props', props)
-  if (props.blog === undefined) {
+  const blog = props.blog
+  const [comment, setComment] = useState('')
+  const handleAddComment = e => {
+    e.preventDefault()
+    const commentObject = {
+      comment,
+      blog
+    }
+    console.log('commentObject', commentObject)
+    props.addComment(props.blog, commentObject)
+  }
+  if (blog === undefined) {
     return null
   }
 
   return (
     <div>
-      <h2>{props.blog.title}</h2>
-      <p>{props.blog.url}</p>
+      <h2>{blog.title}</h2>
+      <p>{blog.url}</p>
       <p>
-        {props.blog.likes} likes
+        {blog.likes} likes
         <button onClick={() => props.handleLike(props.blog)}>Like</button>
       </p>
-      <p>Added by {props.blog.user.name}</p>
-      {/* {user.username === blog.user.username && (
-      //   <button onClick={() => handleRemove({ blog })}>Remove</button>
-      // </div> */}
+      <p>Added by {blog.user.name}</p>
+      <form onSubmit={handleAddComment}>
+        <div>
+          <input
+            type='text'
+            value={comment}
+            name='commment'
+            onChange={({ target }) => setComment(target.value)}
+          />
+          <button type='submit'>Add comment</button>
+        </div>
+      </form>
     </div>
   )
 }
 
-export default DetailedBlog
+const mapDispatchToProps = { addComment }
+export default connect(
+  null,
+  mapDispatchToProps
+)(DetailedBlog)

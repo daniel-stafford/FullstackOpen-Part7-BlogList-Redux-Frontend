@@ -18,7 +18,7 @@ import { initializeUsers } from './reducers/usersReducer'
 import User from './components/User'
 import DetailedBlog from './components/DetailedBlog'
 
-import { Container } from 'semantic-ui-react'
+import { Container, Button, Menu, Header } from 'semantic-ui-react'
 
 const App = props => {
   const [title, setTitle] = useState('')
@@ -74,7 +74,7 @@ const App = props => {
 
   const loginForm = () => (
     <form onSubmit={handleLogin}>
-      <h2>Login</h2>
+      <Header as='h2'>Login</Header>
       <div>
         username
         <input {...username.data} />
@@ -83,7 +83,7 @@ const App = props => {
         password
         <input {...password.data} />
       </div>
-      <button type='submit'>login</button>
+      <Button type='submit'>login</Button>
     </form>
   )
 
@@ -147,16 +147,28 @@ const App = props => {
           ) : (
             <div>
               <div>
-                <div style={{ backgroundColor: '#D0D0D0' }}>
-                  <Link style={{ padding: 5 }} to='/'>
-                    blogs
-                  </Link>
-                  <Link style={{ padding: 5 }} to='/users'>
-                    users
-                  </Link>
-                  {props.user.name} logged in
-                  <button onClick={handleLogOut}>Log out</button>
-                </div>
+                <Menu inverted style={{ marginBottom: '10px' }}>
+                  <Menu.Item link>
+                    <Link style={{ padding: 5 }} to='/'>
+                      Blogs
+                    </Link>
+                  </Menu.Item>
+                  <Menu.Item link>
+                    <Link style={{ padding: 5 }} to='/users'>
+                      Users
+                    </Link>
+                  </Menu.Item>
+                  <Menu.Item link>
+                    {props.user.name} logged in
+                    <Button
+                      primary
+                      onClick={handleLogOut}
+                      style={{ marginLeft: '10%' }}
+                    >
+                      Log out
+                    </Button>
+                  </Menu.Item>
+                </Menu>
               </div>
               <Route
                 exact

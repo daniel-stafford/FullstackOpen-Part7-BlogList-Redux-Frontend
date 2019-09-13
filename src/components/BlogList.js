@@ -2,6 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import Blog from './Blog'
 import BlogForm from './BlogForm'
+import { Table, Button } from 'semantic-ui-react'
 
 const BlogList = ({
   blogs,
@@ -21,7 +22,7 @@ const BlogList = ({
   return (
     <div>
       <div style={hideWhenVisible}>
-        <button onClick={() => setAddBlogVisible(true)}>New Post</button>
+        <Button onClick={() => setAddBlogVisible(true)}>New Post</Button>
       </div>
       <div style={showWhenVisible}>
         <BlogForm
@@ -34,20 +35,26 @@ const BlogList = ({
           setUrl={setUrl}
           setAddBlogVisible={setAddBlogVisible}
         />
-        <button onClick={() => setAddBlogVisible(false)}>Cancel</button>
+        <Button secondary onClick={() => setAddBlogVisible(false)}>
+          Cancel
+        </Button>
       </div>
-      {blogs
-        .sort((a, b) => {
-          return b.likes - a.likes
-        })
-        .map(blog => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            handleLike={handleLike}
-            handleRemove={handleRemove}
-          />
-        ))}
+      <Table striped celled>
+        <Table.Body>
+          {blogs
+            .sort((a, b) => {
+              return b.likes - a.likes
+            })
+            .map(blog => (
+              <Blog
+                key={blog.id}
+                blog={blog}
+                handleLike={handleLike}
+                handleRemove={handleRemove}
+              />
+            ))}
+        </Table.Body>
+      </Table>
     </div>
   )
 }

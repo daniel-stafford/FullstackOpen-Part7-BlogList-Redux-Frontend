@@ -2,10 +2,9 @@ import React, { useState } from 'react'
 import { connect } from 'react-redux'
 import { addComment } from '../reducers/blogReducer'
 import Comment from './Comment'
-
+import { Button, Header } from 'semantic-ui-react'
 const DetailedBlog = props => {
   const blog = props.blog
-  console.log('detailed blog props', blog)
   const [comment, setComment] = useState('')
   const handleAddComment = e => {
     e.preventDefault()
@@ -13,7 +12,6 @@ const DetailedBlog = props => {
       comment,
       blog: blog.id
     }
-    console.log('commentObject', commentObject)
     props.addComment(props.blog, commentObject)
   }
   if (blog === undefined) {
@@ -22,7 +20,7 @@ const DetailedBlog = props => {
 
   return (
     <div>
-      <h2>{blog.title}</h2>
+      <Header as='h2'>{blog.title}</Header>
       <p>{blog.url}</p>
       <p>
         {blog.likes} likes
@@ -37,15 +35,15 @@ const DetailedBlog = props => {
             name='comment'
             onChange={({ target }) => setComment(target.value)}
           />
-          <button type='submit'>Add comment</button>
+          <Button type='submit'>Add comment</Button>
         </div>
       </form>
       {blog.comments && (
         <ul>
           {blog.comments.map(comment => {
             return (
-              <li>
-                <Comment comment={comment} />
+              <li key={comment.id}>
+                <Comment comment={comment} />}
               </li>
             )
           })}

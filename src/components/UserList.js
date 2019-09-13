@@ -2,12 +2,13 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { initializeUsers } from '../reducers/usersReducer'
 import UserTable from './UserTable'
+import { Header } from 'semantic-ui-react'
 
 /* eslint-disable */
 const UserList = props => {
   return (
     <div>
-      <h2>Users</h2>
+      <Header as='h2'>Users</Header>
       <table>
         <thead>
           <tr>

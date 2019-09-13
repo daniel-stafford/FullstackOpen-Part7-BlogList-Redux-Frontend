@@ -18,6 +18,8 @@ import { initializeUsers } from './reducers/usersReducer'
 import User from './components/User'
 import DetailedBlog from './components/DetailedBlog'
 
+import { Container } from 'semantic-ui-react'
+
 const App = props => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
@@ -135,70 +137,72 @@ const App = props => {
   const showWhenVisible = { display: addBlogVisible ? '' : 'none' }
 
   return (
-    <Router>
-      <div>
-        <h1>Blog</h1>
-        <Notification />
-        {props.user === null ? (
-          loginForm()
-        ) : (
-          <div>
+    <Container>
+      <Router>
+        <div>
+          <h1>Blog</h1>
+          <Notification />
+          {props.user === null ? (
+            loginForm()
+          ) : (
             <div>
-              <div style={{ backgroundColor: '#D0D0D0' }}>
-                <Link style={{ padding: 5 }} to='/'>
-                  blogs
-                </Link>
-                <Link style={{ padding: 5 }} to='/users'>
-                  users
-                </Link>
-                {props.user.name} logged in
-                <button onClick={handleLogOut}>Log out</button>
+              <div>
+                <div style={{ backgroundColor: '#D0D0D0' }}>
+                  <Link style={{ padding: 5 }} to='/'>
+                    blogs
+                  </Link>
+                  <Link style={{ padding: 5 }} to='/users'>
+                    users
+                  </Link>
+                  {props.user.name} logged in
+                  <button onClick={handleLogOut}>Log out</button>
+                </div>
               </div>
+              <Route
+                exact
+                path='/'
+                render={() => (
+                  <BlogList
+                    handleLike={handleLike}
+                    handleRemove={handleRemove}
+                    handleAddBlog={handleAddBlog}
+                    title={title}
+                    setTitle={setTitle}
+                    author={author}
+                    setAuthor={setAuthor}
+                    url={url}
+                    setUrl={setUrl}
+                    setAddBlogVisible={setAddBlogVisible}
+                    hideWhenVisible={hideWhenVisible}
+                    showWhenVisible={showWhenVisible}
+                  />
+                )}
+              />
+              <Route exact path='/users' render={() => <UserList />} />
+              <Route
+                exact
+                path='/users/:id'
+                render={({ match }) => (
+                  <User user={findById(props.users, match.params.id)} />
+                )}
+              />
+              <Route exact path='/blogs' render={() => <BlogList />} />
+              <Route
+                exact
+                path='/blogs/:id'
+                render={({ match }) => (
+                  <DetailedBlog
+                    blog={findById(props.blogs, match.params.id)}
+                    handleLike={handleLike}
+                    handleRemove={handleRemove}
+                  />
+                )}
+              />
             </div>
-            <Route
-              exact
-              path='/'
-              render={() => (
-                <BlogList
-                  handleLike={handleLike}
-                  handleRemove={handleRemove}
-                  handleAddBlog={handleAddBlog}
-                  title={title}
-                  setTitle={setTitle}
-                  author={author}
-                  setAuthor={setAuthor}
-                  url={url}
-                  setUrl={setUrl}
-                  setAddBlogVisible={setAddBlogVisible}
-                  hideWhenVisible={hideWhenVisible}
-                  showWhenVisible={showWhenVisible}
-                />
-              )}
-            />
-            <Route exact path='/users' render={() => <UserList />} />
-            <Route
-              exact
-              path='/users/:id'
-              render={({ match }) => (
-                <User user={findById(props.users, match.params.id)} />
-              )}
-            />
-            <Route exact path='/blogs' render={() => <BlogList />} />
-            <Route
-              exact
-              path='/blogs/:id'
-              render={({ match }) => (
-                <DetailedBlog
-                  blog={findById(props.blogs, match.params.id)}
-                  handleLike={handleLike}
-                  handleRemove={handleRemove}
-                />
-              )}
-            />
-          </div>
-        )}
-      </div>
-    </Router>
+          )}
+        </div>
+      </Router>
+    </Container>
   )
 }
 const mapStateToProps = state => {

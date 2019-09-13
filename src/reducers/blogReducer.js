@@ -17,18 +17,17 @@ export const addLike = (blog, newObject) => {
   }
 }
 
-export const addComment = (blog, newObject) => {
+export const addComment = (blog, commentObject) => {
   return async dispatch => {
-    const commentedBlog = await blogService.expand(
+    const newComment = await blogService.expand(
       blog.id,
       'comments',
-      newObject
+      commentObject
     )
-    console.log('newObject', newObject)
-    console.log('commented blog', commentedBlog)
+    console.log('bewComment', newComment)
     dispatch({
       type: 'ADD_COMMENT',
-      data: { commentedBlog }
+      data: { newComment, blog }
     })
   }
 }
@@ -64,11 +63,16 @@ const blogReducer = (state = [], action) => {
     case 'ADD_BLOG':
       return state.concat(action.data.newBlog)
     case 'ADD_COMMENT':
-      return state.map(b =>
-        b.id === action.data.commentedBlog.id ? action.data.commentedBlog : b
-      )
+      console.log('add comment state', state)
+      console.log('newcomment id', action.data.newComment.id)
+      console.log('map state ids', state.map(b => b.id))
+      const blogToComment = state
+        .find(b => b.id === action.data.blog.id)
+        //not sure why concat isnt't working in place of push.
+        .comments.push(action.data.newComment)
+      return state.map(b => (b.id === blogToComment.id ? blogToComment : b))
     case 'DELETE_BLOG':
-      return [...state].filter(b => b.id !== action.data.blog.id)
+      return state.filter(b => b.id !== action.data.blog.id)
     default:
       return state
   }

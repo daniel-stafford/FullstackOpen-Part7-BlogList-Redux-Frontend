@@ -1,15 +1,17 @@
 import React, { useState } from 'react'
 import { connect } from 'react-redux'
 import { addComment } from '../reducers/blogReducer'
+import Comment from './Comment'
 
 const DetailedBlog = props => {
   const blog = props.blog
+  console.log('detailed blog props', blog)
   const [comment, setComment] = useState('')
   const handleAddComment = e => {
     e.preventDefault()
     const commentObject = {
       comment,
-      blog
+      blog: blog.id
     }
     console.log('commentObject', commentObject)
     props.addComment(props.blog, commentObject)
@@ -32,12 +34,23 @@ const DetailedBlog = props => {
           <input
             type='text'
             value={comment}
-            name='commment'
+            name='comment'
             onChange={({ target }) => setComment(target.value)}
           />
           <button type='submit'>Add comment</button>
         </div>
       </form>
+      {blog.comments && (
+        <ul>
+          {blog.comments.map(comment => {
+            return (
+              <li>
+                <Comment comment={comment} />
+              </li>
+            )
+          })}
+        </ul>
+      )}
     </div>
   )
 }

@@ -77,11 +77,11 @@ const App = props => {
       <Header as='h2'>Login</Header>
       <div>
         username
-        <input {...username.data} />
+        <input {...username.data} id='username' />
       </div>
       <div>
         password
-        <input {...password.data} />
+        <input {...password.data} id='password' />
       </div>
       <Button type='submit'>login</Button>
     </form>

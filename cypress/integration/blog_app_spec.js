@@ -1,12 +1,12 @@
 describe('Blog ', function() {
   beforeEach(function() {
-    // cy.request('POST', 'http://localhost:8003/api/testing/reset')
-    // const user = {
-    //   name: 'Daniel Stafford',
-    //   username: 'dstafford',
-    //   password: 'salasana'
-    // }
-    // cy.request('POST', 'http://localhost:8003/api/users/', user)
+    cy.request('POST', 'http://localhost:3003/api/testing/reset')
+    const user = {
+      name: 'Daniel Stafford',
+      username: 'dstafford',
+      password: 'salasana'
+    }
+    cy.request('POST', 'http://localhost:3003/api/users/', user)
     cy.visit('http://localhost:8000')
   })
   it('front page can be opened', function() {
